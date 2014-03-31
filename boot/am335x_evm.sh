@@ -113,7 +113,7 @@ if [ -f /boot/uboot/flash-eMMC.txt ] ; then
 	fi
 
 	if [ -f /opt/scripts/tools/beaglebone-black-eMMC-flasher.sh ] ; then
-		/bin/bash /opt/scripts/tools/beaglebone-black-eMMC-flasher.sh >/boot/uboot/debug/flash-eMMC.log 2>&1
+		/bin/bash /opt/scripts/tools/beaglebone-black-eMMC-flasher.sh >"/boot/uboot/debug/flash-eMMC-${SERIAL_NUMBER}.log" 2>&1
 	fi
 fi
 
