@@ -228,6 +228,13 @@ copy_rootfs () {
 	echo "${root_uuid}  /  ${root_filesystem}  noatime,errors=remount-ro  0  1" >> /tmp/rootfs/etc/fstab
 	echo "${boot_uuid}  /boot/uboot  auto  defaults  0  0" >> /tmp/rootfs/etc/fstab
 	echo "debugfs         /sys/kernel/debug  debugfs  defaults          0  0" >> /tmp/rootfs/etc/fstab
+
+	# Get serial number from eeprom, prefix with BBB- and put it in /etc/hostname and /etc/hosts
+	eeprom="/sys/bus/i2c/devices/0-0050/eeprom"
+	SERIAL_NUMBER=BBB-$(hexdump -e '8/1 "%c"' ${eeprom} -s 14 -n 2)-$(hexdump -e '8/1 "%c"' ${eeprom} -s 16 -n 12)
+	echo "${SERIAL_NUMBER}" > /tmp/rootfs/etc/hostname
+	echo "127.0.1.1       ${SERIAL_NUMBER}" >> /tmp/rootfs/etc/hosts
+
 	flush_cache
 	umount ${destination}p2 || true
 
@@ -239,7 +246,7 @@ copy_rootfs () {
 	fi
 
 	echo ""
-	echo "This script has now completed it's task"
+	echo "This script has now completed its task on ${SERIAL_NUMBER}"
 	echo "-----------------------------"
 	echo "Note: Actually unpower the board, a reset [sudo reboot] is not enough."
 	echo "-----------------------------"
